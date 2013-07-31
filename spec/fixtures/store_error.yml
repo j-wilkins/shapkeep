@@ -1,0 +1,7 @@
+---
+:zero:
+  :script: return 0
+:one:
+  :script: return 1
+:error:
+  :script: asdf123
