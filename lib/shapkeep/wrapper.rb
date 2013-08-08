@@ -11,6 +11,10 @@ class Shapkeep
       @shapkeep = Shapkeep.new(script_file)
     end
 
+    def eval(*args)
+      __getobj__.eval(*args)
+    end
+
     def eval_script(script_name, keys = [], args = [])
       shapkeep.eval(redis, script_name, keys, args)
     end
