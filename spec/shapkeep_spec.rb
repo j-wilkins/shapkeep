@@ -5,7 +5,7 @@ describe Shapkeep do
   subject { Shapkeep.new('spec/fixtures/store.yml') }
 
   context 'script store' do
-    specify { expect(subject.script_store.keys).to eq([:zero, :one]) }
+    specify { expect(subject.script_store.keys).to eq([:zero, :one, :file]) }
   end
 
   context 'script available' do
@@ -16,8 +16,8 @@ describe Shapkeep do
   describe 'load scripts' do
     before { redis.script(:flush); subject.load_scripts!(redis) }
     specify do
-      expect(redis.script(:exists, [subject.send(:sha_for_script, :zero),
-        subject.send(:sha_for_script, :one)])).to be_true
+      expect(redis.script(:exists, [subject.send(:sha_for_script_name, :zero),
+        subject.send(:sha_for_script_name, :one)])).to be_true
     end
   end
 
@@ -44,6 +44,11 @@ describe Shapkeep do
       specify do
         expect(subject.eval(redis, :one)).to be(1)
       end
+    end
+
+    context 'script is filename' do
+      before { redis.script(:flush) }
+      specify { expect(subject.eval(redis, :file)).to eq(2) }
     end
 
     context 'script errors' do

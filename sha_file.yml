@@ -1,5 +1,0 @@
----
-:zero:
-  :script: return 0
-:one:
-  :script: return 1

@@ -13,7 +13,7 @@ class Shapkeep
   def eval(redis, name, keys = [], args = [])
     begin
       invalid_script_name!(name) unless script_available?(name)
-      redis.evalsha(sha_for_script(name), keys, args)
+      redis.evalsha(sha_for_script_name(name), keys, args)
     rescue Redis::CommandError => boom
       raise boom unless boom.message.include?('NOSCRIPT')
 
@@ -36,16 +36,24 @@ class Shapkeep
 
   private
 
-  def sha_for_script(name)
-    script_store[name.to_sym][:sha] ||= sha_script(name)
+  def sha_for_script_name(name)
+    script_store[name.to_sym][:sha] ||= script_sha(script_for_name(name))
   end
 
-  def sha_script(name)
-    Digest::SHA1.hexdigest(script_for_name(name))
+  def script_sha(script)
+    Digest::SHA1.hexdigest(script)
   end
 
   def script_for_name(name)
-    script_store[name.to_sym][:script]
+    potential_script = script_store[name.to_sym][:script]
+
+    return potential_script unless lua_filename?(potential_script)
+
+    File.read(potential_script)
+  end
+
+  def lua_filename?(string)
+    ['.lua', '.LUA'].include?(string[-4..-1])
   end
 
   def load_script(redis, name)

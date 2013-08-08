@@ -57,6 +57,10 @@ Or as a wrapper (uses SimpleDelegator)
 
      redis.eval_script(:one, ['key1'], ['arg1'])
 
+Your YAML file should represent a Hash that looks like:
+
+     {:script_name =>  {:script => "script or filename"}}
+
 ## Contributing
 
 1. Fork it
