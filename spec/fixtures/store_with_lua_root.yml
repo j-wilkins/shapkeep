@@ -1,0 +1,8 @@
+---
+:lua_root: /dev/null/
+:zero:
+  :script: return 0
+:one:
+  :script: return 1
+:file:
+  :script: spec/fixtures/return_two.lua

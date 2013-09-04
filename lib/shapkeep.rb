@@ -4,10 +4,12 @@ require 'shapkeep/version'
 class Shapkeep
   InvalidScriptNameError = Class.new(StandardError)
 
+  attr_accessor :lua_root
   attr_reader :sha_file
 
   def initialize(sha_file)
     @sha_file = sha_file
+    @lua_root = script_store.delete(:lua_root) { Dir.pwd }
   end
 
   def eval(redis, name, keys = [], args = [])
@@ -49,7 +51,7 @@ class Shapkeep
 
     return potential_script unless lua_filename?(potential_script)
 
-    File.read(potential_script)
+    File.read(File.join(lua_root, potential_script))
   end
 
   def lua_filename?(string)

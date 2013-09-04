@@ -21,6 +21,22 @@ describe Shapkeep do
     end
   end
 
+  describe 'lua_root' do
+    context 'loads from yaml' do
+      subject { Shapkeep.new('spec/fixtures/store_with_lua_root.yml') }
+      specify { expect(subject.lua_root).to eq('/dev/null/') }
+      specify { expect(subject.script_store.has_key?(:lua_root)).to be_false }
+    end
+
+    it 'loads scripts from there' do
+      subject.lua_root = Dir.pwd
+      expect(subject.send(:script_for_name, :file)).to be_a(String)
+
+      subject.lua_root = '/tmp'
+      expect(-> {subject.send(:script_for_name, :file)}).to raise_error(Errno::ENOENT)
+    end
+  end
+
   describe 'eval' do
     context 'invalid script name' do
       specify do
